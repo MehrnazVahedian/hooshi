@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.MainActivity"
+        android:background="@color/white">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewMainConnect"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="38dp"
+            android:background="@drawable/ic_link"
+            app:layout_constraintTop_toTopOf="@id/textViewMainVaziat"
+            app:layout_constraintEnd_toStartOf="@id/textViewMainVaziat"
+            app:layout_constraintBottom_toTopOf="@id/textViewMainConnect"
+            android:visibility="invisible"
+            />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewMainDisconnect"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/nolink"
+            android:layout_marginTop="38dp"
+            app:layout_constraintTop_toTopOf="@id/textViewMainVaziat"
+            app:layout_constraintEnd_toStartOf="@id/textViewMainVaziat"
+            app:layout_constraintBottom_toTopOf="@id/textViewMainConnect"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewMainVaziat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="70dp"
+            android:text="وضعیت اتصال "
+            android:textColor="@color/gray_light"
+            android:textSize="25dp"
+            tools:ignore="MissingConstraints"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewMainConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textViewMainVaziat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible"
+            android:layout_marginLeft="80dp"
+            android:text="connected"
+            android:textSize="28dp"
+            tools:ignore="MissingConstraints"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewMainDisConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textViewMainVaziat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="87dp"
+            android:text="Disconnected"
+            android:textSize="24dp"
+            tools:ignore="MissingConstraints"
+            />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/activityMainChart"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <it.ngallazzi.fancyswitch.FancySwitch
+            android:id="@+id/fancySwitchButton"
+            android:layout_height="70dp"
+            android:layout_width="180dp"
+            app:layout_constraintTop_toBottomOf="@id/activityMainChart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:orientation="LANDSCAPE"
+            app:actionOffDrawable="@drawable/ic_cancel"
+            app:actionOnDrawable="@drawable/ic_check"
+            app:baseColor="@color/gray_dark" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
