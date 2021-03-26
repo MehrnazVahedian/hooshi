@@ -11,5 +11,6 @@
     <color name="gray_light">#353535</color>
     <color name="red_dark">#8C0000</color>
     <color name="red_light">#FF1000</color>
+    <color name="hover">#7E7E7E</color>
 
 </resources>

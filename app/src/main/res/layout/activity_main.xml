@@ -14,6 +14,11 @@
         tools:context=".activity.MainActivity"
         android:background="@color/white">
 
+        <include
+            android:id="@+id/mainToolbar"
+            layout="@layout/toolbar"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageViewMainConnect"
             android:layout_width="60dp"
@@ -97,7 +102,8 @@
             app:orientation="LANDSCAPE"
             app:actionOffDrawable="@drawable/ic_cancel"
             app:actionOnDrawable="@drawable/ic_check"
-            app:baseColor="@color/gray_dark" />
+            app:baseColor="@color/gray_dark"
+            android:visibility="invisible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
