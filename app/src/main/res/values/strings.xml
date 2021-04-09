@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Hooshi</string>
-    <string name="Setting">Setting</string>
-    <string name="AboutUs">AboutUs</string>
+    <string name="Setting">تنظیمات</string>
+    <string name="AboutUs">درباره ی ما</string>
     <string name="LogOut">LogOut</string>
 </resources>
