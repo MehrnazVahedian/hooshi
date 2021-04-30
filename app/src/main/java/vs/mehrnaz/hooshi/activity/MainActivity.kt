@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
@@ -14,7 +16,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.observe
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
@@ -32,22 +33,64 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        viewModel.lastData.observe(this) {
-            Toast.makeText(baseContext, it, Toast.LENGTH_LONG).show()
-        }
-
         //chane Status Toolbar Background to gradient
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = window
-            val background = getDrawable(R.drawable.gray_gradient_no_corner) //bg_gradient is your gradient.
+            val background =  ContextCompat.getDrawable(baseContext,R.drawable.gray_gradient_no_corner) //bg_gradient is your gradient.
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = resources.getColor(android.R.color.transparent)
             window.setBackgroundDrawable(background)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
+
+        binding.mainToolbar.toolbarSimpleMenuImageButton.visibility = View.VISIBLE
+        binding.mainToolbar.toolbarSimpleMenuImageButton.setOnClickListener(View.OnClickListener { v: View? ->
+            val popup = PopupMenu(this@MainActivity, v)
+            popup.menuInflater.inflate(R.menu.pop_up, popup.menu)
+            popup.setOnMenuItemClickListener { item: MenuItem ->
+                if (item.itemId == R.id.aboutItemMenu) {
+                    startActivity(Intent(this@MainActivity, AboutActivity::class.java))
+                } else if (item.itemId == R.id.settingItemMenu) {
+                    startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+                }
+                true
+            }
+            popup.show() //showing popup menu
+        })
+        binding.mainToolbar.toolbarSimpleBackImageButton.visibility = View.GONE
+        binding.mainToolbar.toolbarSimpleTitleTextView.text = getString(R.string.app_name)
+
+        val timerHandler = Handler()
+        val timerRunnable: Runnable = object : Runnable {
+            override fun run() {
+                viewModel.getLastData()
+
+                timerHandler.postDelayed(this, 5000)
+            }
+        }
+
+
+        timerHandler.postDelayed(timerRunnable, 0)
+
+
+        viewModel.lastData.observe(this, {
+//            Toast.makeText(baseContext, it, Toast.LENGTH_LONG).show()
+
+            updateDonut(it.toFloat())
+        })
+
+        viewModel.dataHistory.observe(this, {
+//            Toast.makeText(baseContext, it, Toast.LENGTH_LONG).show()
+
+            updateLineChart(it)
+        })
+
+    }
+
+    private fun updateDonut(value: Float){
         val entryList: MutableList<PieEntry> = ArrayList()
-        entryList.add(PieEntry(75f))
-        entryList.add(PieEntry(25f))
+        entryList.add(PieEntry(value / 100))
+        entryList.add(PieEntry(100-value / 100))
         val dataSet = PieDataSet(entryList, "test")
         val colors: MutableList<Int> = ArrayList()
         colors.add(Color.rgb(255, 0, 0))
@@ -66,29 +109,19 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainDounatChart.holeRadius = 85f
         binding.activityMainDounatChart.transparentCircleRadius = 86f
         binding.activityMainDounatChart.setHoleColor(ContextCompat.getColor(this, R.color.gray_light))
-        binding.mainToolbar.toolbarSimpleMenuImageButton.visibility = View.VISIBLE
-        binding.mainToolbar.toolbarSimpleMenuImageButton.setOnClickListener(View.OnClickListener { v: View? ->
-            val popup = PopupMenu(this@MainActivity, v)
-            popup.menuInflater.inflate(R.menu.pop_up, popup.menu)
-            popup.setOnMenuItemClickListener { item: MenuItem ->
-                if (item.itemId == R.id.aboutItemMenu) {
-                    startActivity(Intent(this@MainActivity, AboutActivity::class.java))
-                } else if (item.itemId == R.id.settingItemMenu) {
-                    startActivity(Intent(this@MainActivity, SettingActivity::class.java))
-                }
-                true
-            }
-            popup.show() //showing popup menu
-        })
-        binding.mainToolbar.toolbarSimpleBackImageButton.visibility = View.GONE
-        binding.mainToolbar.toolbarSimpleTitleTextView.text = getString(R.string.app_name)
+
+        binding.activityMainDonutValueTextView.text = value.toString().subSequence(0,4)
+    }
+
+    private fun updateLineChart(data: List<Float>){
         val values = ArrayList<Entry>()
-        values.add(Entry(1F, 65F))
-        values.add(Entry(10F, 50F))
-        values.add(Entry(15F, 85F))
-        values.add(Entry(20F, 100F))
-        values.add(Entry(25F, 40F))
-        values.add(Entry(30F, 55F))
+        Log.d("LineChart" , "values added: "+ data.size)
+
+        for ( i in data.indices){
+            values.add(Entry(i.toFloat() +1 , data[i]))
+            Log.d("LineChart" , "value added: "+ data[i])
+        }
+
         val set1: LineDataSet
         if (binding.activityMainLineChart.data != null &&
                 binding.activityMainLineChart.data.dataSetCount > 0) {

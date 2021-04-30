@@ -25,7 +25,7 @@ private val retrofit = Retrofit.Builder()
 interface BaseApiService {
 
     @GET("loglastjson81.php")
-    suspend fun getData(@QueryMap id:Long): LastDataResponseModel
+    suspend fun getData(@Query("id") id:Long): LastDataResponseModel
 
 }
 
