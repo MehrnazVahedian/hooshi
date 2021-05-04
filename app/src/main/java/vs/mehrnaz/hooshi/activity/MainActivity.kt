@@ -85,6 +85,8 @@ class MainActivity : AppCompatActivity() {
             updateLineChart(it)
         })
 
+        viewModel.loadDefaultData()
+
     }
 
     private fun updateDonut(value: Float){

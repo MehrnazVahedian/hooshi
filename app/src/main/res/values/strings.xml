@@ -3,4 +3,5 @@
     <string name="Setting">تنظیمات</string>
     <string name="AboutUs">درباره ی ما</string>
     <string name="LogOut">LogOut</string>
+    <string name="my_preference">my_preference</string>
 </resources>
