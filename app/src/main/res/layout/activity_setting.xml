@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.SettingActivity"
+        android:background="@color/gray_light">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingToolbar"
+            layout="@layout/toolbar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/ScrollViewSetting"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/settingToolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+        >
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardViewSetting"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.4"
+            app:layout_constraintDimensionRatio="3:2"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/smoke_white"
+            app:cardElevation="8dp"
+            >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewSettingId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/cardViewSetting"
+            android:layout_marginStart="12dp"
+            android:text="id"
+            android:textColor="@color/gray_light"
+            android:textSize="18dp"
+            tools:ignore="MissingConstraints"
+            />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSetting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="50dp"
+                ></com.google.android.material.button.MaterialButton>
+
+        </com.google.android.material.card.MaterialCardView>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

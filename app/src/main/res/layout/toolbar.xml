@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".toolbar">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.Hooshi"
+            android:layoutDirection="rtl"
+            tools:ignore="MissingConstraints">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbarSimple"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/gray_gradient_no_corner"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <ImageButton
+                        android:id="@+id/toolbarSimpleBackImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/hover_oval"
+                        app:srcCompat="@drawable/ic_back_black24"
+                        android:tint="@color/white"
+                        />
+
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/toolbarSimpleTitleTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:layoutDirection="rtl"
+                        />
+
+                    <ImageButton
+                        android:id="@+id/toolbarSimpleMenuImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/hover_oval"
+                        app:srcCompat="@drawable/ic_more_black24"
+                        android:tint="@color/white"
+                        android:visibility="visible"
+                        />
+                </LinearLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
