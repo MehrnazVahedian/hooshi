@@ -1,9 +1,10 @@
-package vs.mehrnaz.hooshi
+package vs.mehrnaz.hooshi.utils
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import vs.mehrnaz.hooshi.R
 
 class PreferenceManager(private var context: Context) {
     lateinit var sharedPreferences: SharedPreferences

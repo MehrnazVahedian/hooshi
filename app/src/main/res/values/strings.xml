@@ -4,4 +4,15 @@
     <string name="AboutUs">درباره ی ما</string>
     <string name="LogOut">LogOut</string>
     <string name="my_preference">my_preference</string>
+    <string name="user_name">نام کاربری</string>
+    <string name="id">شناسه</string>
+    <string name="min">حداقل مقدار</string>
+    <string name="max">حداکثر مقدار</string>
+    <string name="rows">تعداد سطرها</string>
+    <string name="user_name_key">userName</string>
+    <string name="id_key">id</string>
+    <string name="min_key">min</string>
+    <string name="max_key">max</string>
+    <string name="input_key">input</string>
+    <string name="rows_key">row</string>
 </resources>

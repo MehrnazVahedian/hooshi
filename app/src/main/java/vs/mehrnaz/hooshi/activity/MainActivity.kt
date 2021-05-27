@@ -6,6 +6,7 @@ import android.graphics.DashPathEffect
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +22,9 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import vs.mehrnaz.hooshi.R
 import vs.mehrnaz.hooshi.databinding.ActivityMainBinding
+import vs.mehrnaz.hooshi.utils.PreferenceManager
+import vs.mehrnaz.hooshi.utils.setStatusBarGradient
+import vs.mehrnaz.hooshi.utils.showToastMessage
 import vs.mehrnaz.hooshi.viewModels.MainViewModel
 import java.util.*
 
@@ -28,23 +32,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     val viewModel: MainViewModel by viewModels()
+    var min : Long = 0
+    var max : Long = 100
+    var row : Long = 8
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         //chane Status Toolbar Background to gradient
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            val background =  ContextCompat.getDrawable(baseContext,R.drawable.gray_gradient_no_corner) //bg_gradient is your gradient.
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = resources.getColor(android.R.color.transparent)
-            window.setBackgroundDrawable(background)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+        setStatusBarGradient()
+
+        initDonut()
 
         binding.mainToolbar.toolbarSimpleMenuImageButton.visibility = View.VISIBLE
-        binding.mainToolbar.toolbarSimpleMenuImageButton.setOnClickListener(View.OnClickListener { v: View? ->
+        binding.mainToolbar.toolbarSimpleMenuImageButton.setOnClickListener { v: View? ->
             val popup = PopupMenu(this@MainActivity, v)
             popup.menuInflater.inflate(R.menu.pop_up, popup.menu)
             popup.setOnMenuItemClickListener { item: MenuItem ->
@@ -56,27 +58,27 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             popup.show() //showing popup menu
-        })
+        }
         binding.mainToolbar.toolbarSimpleBackImageButton.visibility = View.GONE
         binding.mainToolbar.toolbarSimpleTitleTextView.text = getString(R.string.app_name)
 
-        val timerHandler = Handler()
+        binding.textViewMainId.text = viewModel.id.toString()
+
+        val timerHandler = Handler(Looper.getMainLooper())
         val timerRunnable: Runnable = object : Runnable {
             override fun run() {
                 viewModel.getLastData()
-
-                timerHandler.postDelayed(this, 5000)
+                // Time for Call Api And Refresh Data --> 5000 = 5 seconds
+                timerHandler.postDelayed(this, 10000)
             }
         }
-
-
         timerHandler.postDelayed(timerRunnable, 0)
 
 
         viewModel.lastData.observe(this, {
-//            Toast.makeText(baseContext, it, Toast.LENGTH_LONG).show()
-
-            updateDonut(it.toFloat())
+//            updateDonut(it.toFloat())
+            updateDonut(it.toFloat() + (Math.random() * 50).toFloat())
+            showToastMessage(it)
         })
 
         viewModel.dataHistory.observe(this, {
@@ -89,30 +91,52 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun initDonut(){
+
+        min = PreferenceManager(applicationContext).checkLongPreference(R.string.min_key)
+        max = PreferenceManager(applicationContext).checkLongPreference(R.string.max_key)
+
+        binding.activityMainDounatChart.isRotationEnabled = false
+        binding.activityMainDounatChart.description.isEnabled = false
+        binding.activityMainDounatChart.holeRadius = 85f
+        binding.activityMainDounatChart.transparentCircleRadius = 86f
+        binding.activityMainDounatChart.setHoleColor(ContextCompat.getColor(this, R.color.gray_light))
+        binding.activityMainDounatChart.rotationAngle = 90f
+        binding.activityMainDounatChart.isHighlightPerTapEnabled = false
+        binding.activityMainDounatChart.animateY(2400, Easing.EaseInOutQuad)
+        binding.activityMainDonutValueTextView.visibility = View.INVISIBLE
+        binding.activityMainDounatChart.setCenterTextSize(48f)
+        binding.activityMainDounatChart.setCenterTextColor(Color.rgb(255, 0, 0))
+    }
+
     private fun updateDonut(value: Float){
+
         val entryList: MutableList<PieEntry> = ArrayList()
-        entryList.add(PieEntry(value / 100))
-        entryList.add(PieEntry(100-value / 100))
-        val dataSet = PieDataSet(entryList, "test")
+        entryList.add(PieEntry(value - min))
+        entryList.add(PieEntry(max - value))
+        val dataSet = PieDataSet(entryList, "inputA")
         val colors: MutableList<Int> = ArrayList()
         colors.add(Color.rgb(255, 0, 0))
         colors.add(Color.rgb(85, 85, 85))
         dataSet.colors = colors
         dataSet.setDrawValues(false)
-        dataSet.valueTextSize = 850f
         val pieData = PieData(dataSet)
         //        data.setDrawValues(false);
         binding.activityMainDounatChart.data = pieData
-        binding.activityMainDounatChart.isRotationEnabled = false
-        binding.activityMainDounatChart.description.isEnabled = false
-        binding.activityMainDounatChart.rotationAngle = 90f
-        binding.activityMainDounatChart.isHighlightPerTapEnabled = false
-        binding.activityMainDounatChart.animateY(2400, Easing.EaseInOutQuad)
-        binding.activityMainDounatChart.holeRadius = 85f
-        binding.activityMainDounatChart.transparentCircleRadius = 86f
-        binding.activityMainDounatChart.setHoleColor(ContextCompat.getColor(this, R.color.gray_light))
 
-        binding.activityMainDonutValueTextView.text = value.toString().subSequence(0,4)
+        var valueText = value.toString()
+        if (valueText[valueText.length -1 ] == '.')
+            valueText = valueText.subSequence(0,valueText.length -1).toString()
+        if (valueText.contains('.'))
+            valueText = valueText.subSequence(0,valueText.indexOf('.')+2).toString()
+        if (valueText[valueText.length -1 ] == '0' && valueText[valueText.length -2 ] == '.')
+            valueText = valueText.subSequence(0,valueText.length -2).toString()
+
+        binding.activityMainDounatChart.centerText = valueText
+
+        binding.activityMainDounatChart.animateY(0, Easing.Linear)
+
+
     }
 
     private fun updateLineChart(data: List<Float>){
@@ -157,5 +181,10 @@ class MainActivity : AppCompatActivity() {
             val data = LineData(dataSets)
             binding.activityMainLineChart.data = data
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
 }
