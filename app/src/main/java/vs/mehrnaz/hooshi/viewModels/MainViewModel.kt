@@ -22,6 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val lastData : LiveData<String>
         get() = _lastData
 
+    private var row = PreferenceManager(getApplication()).checkLongPreference(R.string.rows_key)
 
     private val _dataHistory = MutableLiveData<MutableList<Float>>()
     val dataHistory : LiveData<MutableList<Float>>
@@ -31,13 +32,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val slicedList = mutableListOf<Float>()
 
     val id = PreferenceManager(getApplication()).checkLongPreference(R.string.id_key)
+    val input = PreferenceManager(getApplication()).checkIntPreference(R.string.input_key)
 
 
     fun loadDefaultData(){
+        if(row == 0L) row = 10
+
         PreferenceManager(getApplication()).checkObject<MutableList<Float>>("data_history").let {
             if (it!= null){
+
                 tempList = it
-                for(i in 0 until tempList.size step 10)
+
+                var step = (tempList.size / row).toInt()
+                if (step == 0) step = 1
+
+                for(i in 0 until tempList.size step step)
                     slicedList.add(tempList[i])
 
                 Log.d("slice", "tempList: "+tempList.size+" slicedList "+ slicedList.size)
@@ -54,10 +63,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val apiResponse: LastDataResponseModel = BaseApi.retrofitService.getData(id)
 
-                _lastData.value = apiResponse.inputB
-                Log.d("LineChart" , "value to be added: "+ apiResponse.inputB)
+                _lastData.value = when(input){
+                    0 -> apiResponse.inputA
+                    1 -> apiResponse.inputB
+                    2 -> apiResponse.inputC
+                    3 -> apiResponse.inputD
+                    4 -> apiResponse.inputE
+                    5 -> apiResponse.inputF
+                    6 -> apiResponse.inputG
+                    else -> apiResponse.inputH
+                }
 
-                tempList.add(apiResponse.inputB!!.toFloat())
+                tempList.add(_lastData.value!!.toFloat())
                 if (tempList.size > 100)
                     tempList.removeAt(0)
 
@@ -65,7 +82,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 slicedList.clear()
 
-                for(i in 0 until tempList.size step 5)
+                var step = (tempList.size / row).toInt()
+                if (step == 0) step = 1
+
+                for(i in 0 until tempList.size step step)
                     slicedList.add(tempList[i])
 
                 Log.d("slice", "tempList: "+tempList.size+" slicedList "+ slicedList.size)

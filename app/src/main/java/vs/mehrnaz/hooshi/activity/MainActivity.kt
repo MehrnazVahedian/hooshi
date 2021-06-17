@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.renderscript.ScriptGroup
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -17,11 +18,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.observe
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import vs.mehrnaz.hooshi.R
 import vs.mehrnaz.hooshi.databinding.ActivityMainBinding
+import vs.mehrnaz.hooshi.utils.Inputs
 import vs.mehrnaz.hooshi.utils.PreferenceManager
 import vs.mehrnaz.hooshi.utils.setStatusBarGradient
 import vs.mehrnaz.hooshi.utils.showToastMessage
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     val viewModel: MainViewModel by viewModels()
     var min : Long = 0
     var max : Long = 100
-    var row : Long = 8
+    var input = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,8 @@ class MainActivity : AppCompatActivity() {
 
         //chane Status Toolbar Background to gradient
         setStatusBarGradient()
+
+        input = Inputs.values()[PreferenceManager(applicationContext).checkIntPreference(R.string.input_key)].toString()
 
         initDonut()
 
@@ -75,17 +80,16 @@ class MainActivity : AppCompatActivity() {
         timerHandler.postDelayed(timerRunnable, 0)
 
 
-        viewModel.lastData.observe(this, {
+        viewModel.lastData.observe(this) {
 //            updateDonut(it.toFloat())
             updateDonut(it.toFloat() + (Math.random() * 50).toFloat())
             showToastMessage(it)
-        })
+        }
 
-        viewModel.dataHistory.observe(this, {
+        viewModel.dataHistory.observe(this) {
 //            Toast.makeText(baseContext, it, Toast.LENGTH_LONG).show()
-
             updateLineChart(it)
-        })
+        }
 
         viewModel.loadDefaultData()
 
@@ -114,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         val entryList: MutableList<PieEntry> = ArrayList()
         entryList.add(PieEntry(value - min))
         entryList.add(PieEntry(max - value))
-        val dataSet = PieDataSet(entryList, "inputA")
+        val dataSet = PieDataSet(entryList, input)
         val colors: MutableList<Int> = ArrayList()
         colors.add(Color.rgb(255, 0, 0))
         colors.add(Color.rgb(85, 85, 85))
@@ -155,8 +159,11 @@ class MainActivity : AppCompatActivity() {
             set1.values = values
             binding.activityMainLineChart.data.notifyDataChanged()
             binding.activityMainLineChart.notifyDataSetChanged()
+            binding.activityMainLineChart.callOnClick()
+            Log.d("LineChart" , "top: ")
+
         } else {
-            set1 = LineDataSet(values, "Sample Data")
+            set1 = LineDataSet(values, input)
             set1.setDrawIcons(false)
             set1.enableDashedLine(10f, 5f, 0f)
             set1.enableDashedHighlightLine(10f, 5f, 0f)
@@ -180,6 +187,8 @@ class MainActivity : AppCompatActivity() {
             dataSets.add(set1)
             val data = LineData(dataSets)
             binding.activityMainLineChart.data = data
+            Log.d("LineChart" , "bottom: ")
+
         }
     }
 

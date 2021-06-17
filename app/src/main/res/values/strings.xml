@@ -15,4 +15,7 @@
     <string name="max_key">max</string>
     <string name="input_key">input</string>
     <string name="rows_key">row</string>
+    <string name="input_title">ورودی: </string>
+    <string name="save">ذخیره</string>
+    <string name="data_history_key">data_history</string>
 </resources>

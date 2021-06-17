@@ -37,6 +37,16 @@ class PreferenceManager(private var context: Context) {
         return sharedPreferences.getLong(context.getString(key), 0)
     }
 
+    fun writeIntPreference(key: Int, value: Int){
+        val editor:SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putInt(context.getString(key), value)
+        editor.apply()
+    }
+
+    fun checkIntPreference(key: Int): Int {
+        return sharedPreferences.getInt(context.getString(key), 0)
+    }
+
     fun clearPreferences(){
         sharedPreferences.edit().clear().apply()
     }
